@@ -22,7 +22,7 @@ public class EnemyAI : MonoBehaviour
     private EnemySkill enemySkill;
 
     [SerializeField] private LayerMask wallLayer;
-    [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private int traceMode;
 
     public Vector2Int topRight;
     private Vector2Int startPos, targetPos;
@@ -35,37 +35,29 @@ public class EnemyAI : MonoBehaviour
 
     private PlayerMovement player;
     private int moveCount;
-    private int traceMode;
+    private int traceDir;
     private Vector2 realPos;
 
     private void Start()
     {
-        traceMode = 0;
+        traceDir = 0;
         enemySkill = GetComponent<EnemySkill>();
         player = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
     }
 
     public int Move()
     {
-        TraceModeSet();
+        PathFinding();
+        TraceDirSet();
         moveCount++;
         if (moveCount + 1 < FinalNodeList.Count)
         {
             Vector2 nextMovePos = new Vector2(FinalNodeList[moveCount].x, FinalNodeList[moveCount].y);
-            if (!Physics2D.CircleCast(nextMovePos, 0.4f, Vector2.zero, 0, enemyLayer))
-            {
-                if (nextMovePos.x < transform.position.x) transform.localScale = new Vector3(1, 1, 1);
-                if (nextMovePos.x > transform.position.x) transform.localScale = new Vector3(-1, 1, 1);
-                transform.DOMove(nextMovePos, 0.2f);
-                skillAim(nextMovePos);
-                return 0;
-            }
-            else
-            {
-                moveCount--;
-                skillAim(transform.position);
-                return 1;
-            }
+            if (nextMovePos.x < transform.position.x) transform.localScale = new Vector3(1, 1, 1);
+            if (nextMovePos.x > transform.position.x) transform.localScale = new Vector3(-1, 1, 1);
+            transform.DOMove(nextMovePos, 0.2f);
+            skillAim(nextMovePos);
+            return 0;
         }
         else
         {
@@ -77,7 +69,8 @@ public class EnemyAI : MonoBehaviour
     private void skillAim(Vector2 getPos)
     {
         realPos = getPos;
-        if (player.movePos.x == realPos.x)
+
+        if (Mathf.Abs(realPos.x - player.movePos.x) < Mathf.Abs(realPos.y - player.movePos.y))
         {
             if (player.movePos.y > realPos.y)
             {
@@ -95,10 +88,20 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void TraceModeSet()
+    private void TraceDirSet()
     {
-        if(Mathf.Abs(realPos.x - player.movePos.x) > Mathf.Abs(realPos.y - player.movePos.y)) traceMode = 1;
-        else traceMode = 0;
+        if(traceMode == 0)
+        {
+            if (Mathf.Abs(realPos.x - player.movePos.x) > Mathf.Abs(realPos.y - player.movePos.y))
+                traceDir = 1;
+            else traceDir = 0;
+        }
+        else
+        {
+            if (Mathf.Abs(realPos.x - player.movePos.x) > Mathf.Abs(realPos.y - player.movePos.y))
+                traceDir = 0;
+            else traceDir = 1;
+        }
     }
 
     public void PathFinding()
@@ -159,7 +162,7 @@ public class EnemyAI : MonoBehaviour
             }
 
 
-            if(traceMode == 0)
+            if(traceDir == 0)
             {
                 OpenListAdd(CurNode.x, CurNode.y + 1);
                 OpenListAdd(CurNode.x, CurNode.y - 1);

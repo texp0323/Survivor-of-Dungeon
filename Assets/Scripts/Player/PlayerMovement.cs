@@ -25,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(KeyCode.RightArrow) && playerInfo.actAble)
         {
             if(!Physics2D.CircleCast(new Vector2(movePos.x + 1, movePos.y), 0.4f, Vector2.zero,0, wallLayer))
             {
@@ -35,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
                 playerInfo.Act();
             }
         }
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow) && playerInfo.actAble)
         {
             if (!Physics2D.CircleCast(new Vector2(movePos.x - 1, movePos.y), 0.4f, Vector2.zero, 0, wallLayer))
             {
@@ -45,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
                 playerInfo.Act();
             }
         }
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) && playerInfo.actAble)
         {
             if (!Physics2D.CircleCast(new Vector2(movePos.x, movePos.y + 1), 0.4f, Vector2.zero, 0, wallLayer))
             {
@@ -54,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
                 playerInfo.Act();
             }
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.DownArrow) && playerInfo.actAble)
         {
             if (!Physics2D.CircleCast(new Vector2(movePos.x, movePos.y - 1), 0.4f, Vector2.zero, 0, wallLayer))
             {

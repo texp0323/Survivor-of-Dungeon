@@ -21,10 +21,6 @@ public class EnemyInfo : MonoBehaviour
             actCount--;
             return true;
         }
-        if(enemyAI.Move() == 1)
-        {
-            return false;
-        }
         else
         {
             actCount = 0;
@@ -35,7 +31,6 @@ public class EnemyInfo : MonoBehaviour
     public int TurnStart()
     {
         actCount = stat.speed;
-        enemyAI.PathFinding();
         return actCount;
     }
 }
