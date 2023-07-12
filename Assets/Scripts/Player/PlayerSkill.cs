@@ -14,8 +14,11 @@ public class PlayerSkill : MonoBehaviour
     private int usingSkillNum;
 
     private Vector2 realPos;
+    private Vector2 rangeScale;
+    private Vector2 rangePos;
     private int lastDir;
     [SerializeField] private Transform rangeBox;
+    [SerializeField] private LayerMask enemyLayer;
     private bool skillMode;
     private float interval;
 
@@ -48,28 +51,32 @@ public class PlayerSkill : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Z)) // 1번 스킬
         {
-            rangeBox.localScale = playerSkills[0].range;
+            rangeScale = playerSkills[0].range;
+            rangeBox.localScale = rangeScale;
             interval = playerSkills[0].interval;
             SkillModeChange(1);
             SkillAiming(lastDir);
         }
         if (Input.GetKeyDown(KeyCode.X)) // 2번 스킬
         {
-            rangeBox.localScale = playerSkills[1].range;
+            rangeScale = playerSkills[1].range;
+            rangeBox.localScale = rangeScale;
             interval = playerSkills[1].interval;
             SkillModeChange(2);
             SkillAiming(lastDir);
         }
         if (Input.GetKeyDown(KeyCode.C)) // 3번 스킬
         {
-            rangeBox.localScale = playerSkills[2].range;
+            rangeScale = playerSkills[2].range;
+            rangeBox.localScale = rangeScale;
             interval = playerSkills[2].interval;
             SkillModeChange(3);
             SkillAiming(lastDir);
         }
         if (Input.GetKeyDown(KeyCode.V)) // 4번 스킬
         {
-            rangeBox.localScale = playerSkills[3].range;
+            rangeScale = playerSkills[3].range;
+            rangeBox.localScale = rangeScale;
             interval = playerSkills[3].interval;
             SkillModeChange(4);
             SkillAiming(lastDir);
@@ -110,8 +117,15 @@ public class PlayerSkill : MonoBehaviour
 
     private void UseSkill()
     {
-        Debug.Log(playerSkills[usingSkillNum-1].skillName + " 스킬사용 - " + usingSkillNum + "번째 스킬");
-        if (playerSkills[usingSkillNum-1].effect) { Instantiate(playerSkills[usingSkillNum-1].effect, rangeBox.position, Quaternion.identity); }
+        Debug.Log(playerSkills[usingSkillNum - 1].skillName + " 스킬사용 - " + usingSkillNum + "번째 스킬");
+        if (playerSkills[usingSkillNum - 1].effect) { Instantiate(playerSkills[usingSkillNum - 1].effect, rangeBox.position, Quaternion.identity); }
+
+        Collider2D[] hitEnemy;
+        if (lastDir <= 2) {hitEnemy = Physics2D.OverlapBoxAll(rangePos, rangeScale, 0, enemyLayer); }
+        else { hitEnemy = Physics2D.OverlapBoxAll(rangePos, new Vector2(rangeScale.y, rangeScale.x), 0, enemyLayer); }
+
+
+
         playerInfo.Act();
         SkillModeChange(0);
         usingSkillNum = 0;
@@ -125,24 +139,28 @@ public class PlayerSkill : MonoBehaviour
         if(dir == 1)
         {
             rangeBox.rotation = Quaternion.Euler(0f, 0f, 0f);
-            rangeBox.position = new Vector3(realPos.x + interval, realPos.y, 0);
+            rangePos = new Vector3(realPos.x + interval, realPos.y, 0);
+            rangeBox.position = rangePos;
             transform.localScale = new Vector3(1, 1, 1);
         }
         if (dir == 2)
         {
             rangeBox.rotation = Quaternion.Euler(0f, 0f, 180f);
-            rangeBox.position = new Vector3(realPos.x - interval, realPos.y, 0);
+            rangePos = new Vector3(realPos.x - interval, realPos.y, 0);
+            rangeBox.position = rangePos;
             transform.localScale = new Vector3(-1, 1, 1);
         }
         if (dir == 3)
         {
             rangeBox.rotation = Quaternion.Euler(0f, 0f, 90f);
-            rangeBox.position = new Vector3(realPos.x, realPos.y + interval, 0);
+            rangePos = new Vector3(realPos.x, realPos.y + interval, 0);
+            rangeBox.position = rangePos;
         }
         if (dir == 4)
         {
             rangeBox.rotation = Quaternion.Euler(0f, 0f, -90f);
-            rangeBox.position = new Vector3(realPos.x, realPos.y - interval, 0);
+            rangePos = new Vector3(realPos.x, realPos.y - interval, 0);
+            rangeBox.position = rangePos;
         }
     }
 
